@@ -141,9 +141,15 @@ LINEからDiscordへ画像を送信する際に使用。
 
 # LINEとのメッセージ共有
 <img src="https://raw.githubusercontent.com/maguro-alternative/mywebsite/main/pic/IMG_8389.png" width="45%">   <img src="https://raw.githubusercontent.com/maguro-alternative/mywebsite/main/pic/IMG_8390.png" width="45%"/>  
+
 LINE側でメンションも可能です。  
+
 ![](https://cdn.discordapp.com/attachments/964819280845766699/991519488149291079/2022-06-19_153318.png)
 ![](https://cdn.discordapp.com/attachments/964819280845766699/991520439325184030/2022-06-29_104732.png)  
+
+動画、スタンプも共有可能です。  
+![](img/134639.png)
+![](img/135314.png)
 
 
 ## 時報と警告つき
