@@ -33,6 +33,11 @@ FIVE_HOUR_ACCESS_TOKEN=
 FIVE_HOUR_CHANNEL_SECRET=
 FIVE_HOUR_GUILD_ID=
 FIVE_HOUR_TEMPLE_ID=
+
+またLINE devloper側で設定するWebhookも
+https://railwayで稼働させてるURL/FIVE_SECOND
+https://railwayで稼働させてるURL/FIVE_HOUR
+と設定する。
 ```
 
 - _WEBHOOK
