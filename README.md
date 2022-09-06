@@ -10,7 +10,7 @@
 # 使い方
 本botはrailwayというサービスでのホストを想定しています。  
 Dockerを使用しているので、簡単にホストできます。  
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/2sSv0z?referralCode=yFsnKR)  
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/NvsGee?referralCode=yFsnKR)  
 line-bot-sdkを使用し、railway側でLINEとDiscordBotをホストできるようにしています。  
 
 # 環境変数について
