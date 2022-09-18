@@ -1,7 +1,9 @@
 import os
 import requests
 
-def message_find(mes,guild_id,temple_id,profile):
+from linebot.models import Profile,Content
+
+def message_find(mes:str,guild_id:int,temple_id:int,profile:Profile):
     token=os.environ["TOKEN"]
     limit=os.environ["USER_LIMIT"]
 
@@ -53,7 +55,7 @@ def img_message(image):
     res=r.json()
     return f"https://i.gyazo.com/{res['image_id']}.{res['type']}"
 
-def download(message_content):
+def download(message_content:Content):
 
 	with open(".\movies\a.mp4", 'wb') as fd:
 		for chunk in message_content.iter_content():

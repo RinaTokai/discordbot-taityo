@@ -1,4 +1,3 @@
-from http import server
 from flask import request, abort, Blueprint ,current_app
 import subprocess
 
@@ -9,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, ImageMessage, VideoMessage, StickerMessage, FileMessage
+    MessageEvent, TextMessage, ImageMessage, VideoMessage, StickerMessage
 )
 import os
 
@@ -46,57 +45,26 @@ def callbacks():
 	return 'OK'
 
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+@handler.add(MessageEvent, message=[TextMessage,ImageMessage,VideoMessage,StickerMessage])
+def handle_message(event:MessageEvent):
+    event_type=event.message.type
+    profile = line_bot_api.get_profile(event.source.user_id)
 
-	profile = line_bot_api.get_profile(event.source.user_id)
-
-	message_find(
-        event.message.text,
+    if event_type=='text':
+        message_text=event.message.text
+    if event_type=='sticker':
+        message_text=f"https://stickershop.line-scdn.net/stickershop/v1/sticker/{event.message.sticker_id}/iPhone/sticker_key@2x.png"
+    if event_type=='image':
+        # message_idから画像のバイナリデータを取得
+        message_content = line_bot_api.get_message_content(event.message.id).content
+        message_text=img_message(message_content)
+    if event_type=='video':
+        message_content = line_bot_api.get_message_content(event.message.id)
+        download(message_content)
+        message_text = subprocess.run(['python', 'upload_video.py', f'--title="{profile.display_name}の動画"','--description="LINEからの動画"'], capture_output=True)
+    message_find(
+        message_text,
         os.environ[f"{server_name}_GUILD_ID"],
         os.environ[f"{server_name}_TEMPLE_ID"],
         profile
-        )
-
-@handler.add(MessageEvent, message=StickerMessage)
-def handle_sticker(event):
-
-	profile = line_bot_api.get_profile(event.source.user_id)
-
-	message_find(
-        f"https://stickershop.line-scdn.net/stickershop/v1/sticker/{event.message.sticker_id}/iPhone/sticker_key@2x.png",
-        os.environ[f"{server_name}_GUILD_ID"],
-        os.environ[f"{server_name}_TEMPLE_ID"],
-        profile
-        )
-@handler.add(MessageEvent, message=ImageMessage)
-def handle_image(event):
-
-	profile = line_bot_api.get_profile(event.source.user_id)
-	# message_idから画像のバイナリデータを取得
-	message_content = line_bot_api.get_message_content(event.message.id).content
-
-	gyazo=img_message(message_content)
-
-	message_find(
-        gyazo,
-        os.environ[f"{server_name}_GUILD_ID"],
-        os.environ[f"{server_name}_TEMPLE_ID"],
-        profile
-        )
-
-@handler.add(MessageEvent, message=VideoMessage)
-def handle_video(event):
-
-	profile = line_bot_api.get_profile(event.source.user_id)
-	# message_idから動画のバイナリデータを取得
-	message_content = line_bot_api.get_message_content(event.message.id)#.content
-
-	download(message_content)
-	res = subprocess.run(['python', 'upload_video.py', f'--title="{profile.display_name}の動画"','--description="LINEからの動画"'], capture_output=True)
-	message_find(
-        f'https://youtu.be/{res.stdout.decode()}',
-        os.environ[f"{server_name}_GUILD_ID"],
-        os.environ[f"{server_name}_TEMPLE_ID"],
-        profile
-        )
+    )
