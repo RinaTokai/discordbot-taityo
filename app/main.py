@@ -1,4 +1,4 @@
-from core.RE2 import DBot
+from core.start import DBot
 import discord
 import os
 

@@ -128,7 +128,7 @@ class mst_line(commands.Cog):
                 limit=PushLimit(name=server_name)
                 if (limit.todaypush()>limit.onedaypush() or
                     limit.afterpush()>=1000 or
-                    (limit.daylimit()<4 and message.channel.id!=os.environ[f"{server_name}_TEMPLE_ID"])):
+                    (limit.daylimit()<4 and message.channel.id!=int(os.environ[f"{server_name}_TEMPLE_ID"]))):
                     return
                 ng_channel=os.environ.get(f"{server_name}_NG_CHANNEL").split(",")
                 for ng in ng_channel:
