@@ -63,7 +63,8 @@ def handle_message(event:MessageEvent):
     if event_type=='video':
         message_content = line_bot_api.get_message_content(event.message.id)
         download(message_content)
-        message_text = subprocess.run(['python', 'upload_video.py', f'--title="{profile.display_name}の動画"','--description="LINEからの動画"'], capture_output=True)
+        youtube_id = subprocess.run(['python', 'upload_video.py', f'--title="{profile.display_name}の動画"','--description="LINEからの動画"'], capture_output=True)
+        message_text = f"https://youtu.be/{youtube_id.stdout.decode()}"
     message_find(
         message_text,
         os.environ[f"{server_name}_GUILD_ID"],
