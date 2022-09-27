@@ -49,7 +49,8 @@ class DBot(discord.AutoShardedBot):
                         本日のプッシュ数                               {limit.todaypush()}\n
                         botの友達数（グループの人数）   {limit.friend()}\n
                         1送信につき消費するプッシュ数   {limit.consumption()}\n
-                        ***残り送信上限                                           {limit.daylimit()}***
+                        ***残り送信上限                                           {limit.daylimit()}***\n
+                        残り送信上限が{limit.templelimit()}以上の場合、テンプレチャンネル以外のメッセージも送信されます。(閲覧注意チャンネルは除く。)
                         """,
                         'color': 15146762,
                         'image': {

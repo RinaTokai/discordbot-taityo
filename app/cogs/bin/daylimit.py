@@ -89,13 +89,15 @@ class Push(Limit):
 		return super().afterpush()-super().todaypush()
 
 class PushLimit(Push):
-	def __init__(self,name:str):
-		super().__init__(name)
+    def __init__(self,name:str):
+        super().__init__(name)
 	
     # (33.333-0)/1
-	def daylimit(self):
-		return math.ceil((super().onedaypush()-super().afterpush())/super().consumption())
-
+    def daylimit(self):
+        return math.ceil((super().onedaypush()-super().afterpush())/super().consumption())
+    
+    def templelimit(self):
+        return math.ceil(super().onedaypush()/super().friend())
 
 if __name__=="main":
     limit=PushLimit(name='')

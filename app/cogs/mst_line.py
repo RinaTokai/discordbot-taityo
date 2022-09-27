@@ -42,7 +42,8 @@ class mst_line(commands.Cog):
                         本日のプッシュ数                               {limit.afterpush()}\n
                         botの友達数（グループの人数）   {limit.friend()}\n
                         1送信につき消費するプッシュ数   {limit.consumption()}\n
-                        ***残り送信上限                                           {limit.daylimit()}***
+                        ***残り送信上限                                           {limit.daylimit()}***\n
+                        残り送信上限が{limit.templelimit()}以上の場合、テンプレチャンネル以外のメッセージも送信されます。(閲覧注意チャンネルは除く。)
                         """,
                         'color': 15146762,
                         'image': {
@@ -128,7 +129,7 @@ class mst_line(commands.Cog):
                 limit=PushLimit(name=server_name)
                 if (limit.todaypush()>limit.onedaypush() or
                     limit.afterpush()>=1000 or
-                    (limit.daylimit()<4 and message.channel.id!=int(os.environ[f"{server_name}_TEMPLE_ID"]))):
+                    (limit.daylimit()<limit.templelimit() and message.channel.id!=int(os.environ[f"{server_name}_TEMPLE_ID"]))):
                     return
                 ng_channel=os.environ.get(f"{server_name}_NG_CHANNEL").split(",")
                 for ng in ng_channel:
@@ -163,7 +164,7 @@ class mst_line(commands.Cog):
                     requests.post(os.environ.get(f"{server_name}_WEBHOOK"),json.dumps(content), headers=headers) 
                 name_tmp=str(server_name)
                 line_bot_api = LineBotApi(os.environ[f"{name_tmp}_ACCESS_TOKEN"])
-                # 環境変数の末尾がsの場合グループIDが存在する。
+                # グループIDが存在するか否か
                 if os.environ.get(f"{name_tmp}_GROUP_ID")!=None:
                     return line_bot_api.push_message(to=os.environ[f"{name_tmp}_GROUP_ID"],messages=messagelist)
                 else:

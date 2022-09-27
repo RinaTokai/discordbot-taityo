@@ -26,8 +26,12 @@ class vc_count(commands.Cog):
             i=len(list(channel.voice_states.keys()))
             await client.send(f"現在{i}人 <@{member.id}>が{before.channel.name}から退出しました。")
 
-            if i==1 and before.channel.guild.voice_client.is_connected():
-                await before.channel.guild.voice_client.disconnect()
+            try:
+                if i==1 and before.channel.guild.voice_client.is_connected():
+                    await before.channel.guild.voice_client.disconnect()
+                    i=0
+            except:
+                print()
 
             if i==0:
                 isum=0
