@@ -8,7 +8,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError, LineBotApiError
 )
 from linebot.models import (
     MessageEvent, TextMessage, ImageMessage, VideoMessage, StickerMessage, FileMessage
@@ -50,7 +50,10 @@ def callback():
 @handler.add(MessageEvent, message=[TextMessage,ImageMessage,VideoMessage,StickerMessage])
 def handle_message(event:MessageEvent):
     event_type=event.message.type
-    profile = line_bot_api.get_profile(event.source.user_id)
+    try:
+        profile = line_bot_api.get_profile(event.source.user_id)
+    except LineBotApiError:
+        profile = line_bot_api.get_group_member_profile(event.source.user_id)
 
     if event_type=='text':
         message_text=event.message.text
