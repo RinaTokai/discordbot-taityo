@@ -70,7 +70,7 @@ RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error,
 RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 
 # clientのjsonファイルのパス
-CLIENT_SECRETS_FILE = "client_secret_791196634502-v4p63hbhcl42pmjuqv7uo4hknit3fto5.apps.googleusercontent.com.json"
+CLIENT_SECRETS_FILE = os.environ["CLIENT_SECRET_NAME"]+".json"
 MISSING_CLIENT_SECRETS_MESSAGE = """
 WARNING: Please configure OAuth 2.0
 
