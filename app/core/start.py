@@ -79,7 +79,7 @@ class DBot(discord.AutoShardedBot):
         except discord.HTTPException as e:
             traceback.print_exc()
             if e.status == 429:
-                main_content = {'content': '<@&855749835096195124> DiscordBot 429エラー\n直ちにDockerファイルを再起動してください。'}
+                main_content = {'content': 'DiscordBot 429エラー\n直ちにDockerファイルを再起動してください。'}
                 headers      = {'Content-Type': 'application/json'}
 
                 response     = requests.post(os.environ["WEBHOOK"], json.dumps(main_content), headers=headers)

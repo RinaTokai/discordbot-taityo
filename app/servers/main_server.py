@@ -53,7 +53,7 @@ def handle_message(event:MessageEvent):
     try:
         profile = line_bot_api.get_profile(event.source.user_id)
     except LineBotApiError:
-        profile = line_bot_api.get_group_member_profile(event.source.user_id)
+        profile = line_bot_api.get_group_member_profile(os.environ[f"{server_name}_GROUP_ID"],event.source.user_id)
 
     if event_type=='text':
         message_text=event.message.text
