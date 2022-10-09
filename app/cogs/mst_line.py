@@ -1,9 +1,8 @@
 import discord
 import os
-import requests
-import json
 
 from cogs.bin.daylimit import PushLimit
+from core.signal import day_signal,angry_signal
 
 from linebot import (
     LineBotApi
@@ -22,43 +21,15 @@ class mst_line(commands.Cog):
 
     @commands.slash_command()
     async def test_signal(self,ctx:discord.ApplicationContext):
+
         servers_name=os.environ['SERVER_NAME']
         server_list=servers_name.split(",")
         for server_name in server_list:
             if int(os.environ[f"{server_name}_GUILD_ID"])==int(ctx.guild.id):
                 await ctx.respond("LINE連携の利用状況です。")
-                limit=PushLimit(name=server_name)
-                text=f"<@{ctx.author.id}>\n"
-                text+="テストコマンド 現在の上限です"
-                embed=[
-                    {
-                        'description': f"""
-                        日付        {limit.today()}日\n
-                        月末日          {limit.endmonth()}日\n
-                        実行時刻            {limit.today_time()}\n
-                        一か月分のプッシュ上限                  {limit.pushlimit()}件\n
-                        今月分のプッシュ数                          {limit.aftertotal()}件\n
-                        本日分のプッシュ上限                      {limit.onedaypush()}\n
-                        本日のプッシュ数                               {limit.afterpush()}\n
-                        botの友達数（グループの人数）   {limit.friend()}\n
-                        1送信につき消費するプッシュ数   {limit.consumption()}\n
-                        ***残り送信上限                                           {limit.daylimit()}***\n
-                        残り送信上限が{limit.templelimit()}以上の場合、テンプレチャンネル以外のメッセージも送信されます。(閲覧注意チャンネルは除く。)
-                        """,
-                        'color': 15146762,
-                        'image': {
-                            'url': 'https://1.bp.blogspot.com/-k7FaT97oySE/WKFi-oaehjI/AAAAAAABBrQ/-Kb-SuhCJHUqqZwCA37rv7I9Fs0KIDxVACLcB/s800/face_angry_man4.png'
-                        }
-                    }
-                ]
-                content = {
-                    'username': '怒りのLINE連携',
-                    'avatar_url': 'https://1.bp.blogspot.com/-k7FaT97oySE/WKFi-oaehjI/AAAAAAABBrQ/-Kb-SuhCJHUqqZwCA37rv7I9Fs0KIDxVACLcB/s800/face_angry_man4.png',
-                    'content': text,
-                    'embeds': embed
-                }
-                headers = {'Content-Type': 'application/json'}
-                requests.post(os.environ.get(f"{server_name}_WEBHOOK"),json.dumps(content), headers=headers)
+                day_signal([server_name],f"<@{ctx.author.id}>\nテストコマンド 現在の上限です")
+                angry_signal(PushLimit(server_name),f"<@{ctx.author.id}>\n",server_name)
+                
 
     # DiscordからLINEへ
     @commands.Cog.listener(name='on_message')
@@ -129,7 +100,8 @@ class mst_line(commands.Cog):
                 limit=PushLimit(name=server_name)
                 if (limit.todaypush()>limit.onedaypush() or
                     limit.afterpush()>=1000 or
-                    (limit.daylimit()<limit.templelimit() and message.channel.id!=int(os.environ[f"{server_name}_TEMPLE_ID"]))):
+                    (limit.daylimit()<limit.templelimit() and 
+                    int(message.channel.id)!=int(os.environ[f"{server_name}_TEMPLE_ID"]))):
                     return
                 ng_channel=os.environ.get(f"{server_name}_NG_CHANNEL").split(",")
                 for ng in ng_channel:
@@ -137,34 +109,15 @@ class mst_line(commands.Cog):
                         return
                 if limit.afterpush()>limit.onedaypush():
                     #print("angry!! fuck you!!")
-                    text=f"<@{message.author.id}>\n"
-                    text+="push上限やぞ！！！！！！！！！！！！！！いい加減にしたらどうだVAVA！！！"
-                    embed=[
-                        {
-                            'description': f"""
-                            一か月分のプッシュ上限                  {limit.pushlimit()}件\n
-                            今月分のプッシュ数                          {limit.aftertotal()}件\n
-                            本日分のプッシュ上限                      {limit.onedaypush()}\n
-                            本日のプッシュ数                               {limit.afterpush()}\n
-                            1送信につき消費するプッシュ数   {limit.consumption()}
-                            """,
-                            'color': 15146762,
-                            'image': {
-                                'url': 'https://1.bp.blogspot.com/-k7FaT97oySE/WKFi-oaehjI/AAAAAAABBrQ/-Kb-SuhCJHUqqZwCA37rv7I9Fs0KIDxVACLcB/s800/face_angry_man4.png'
-                            }
-                        }
-                    ]
-                    content = {
-                        'username': '怒りのLINE連携',
-                        'avatar_url': 'https://1.bp.blogspot.com/-k7FaT97oySE/WKFi-oaehjI/AAAAAAABBrQ/-Kb-SuhCJHUqqZwCA37rv7I9Fs0KIDxVACLcB/s800/face_angry_man4.png',
-                        'content': text,
-                        'embeds': embed
-                    }
-                    headers = {'Content-Type': 'application/json'}
-                    requests.post(os.environ.get(f"{server_name}_WEBHOOK"),json.dumps(content), headers=headers) 
+                    angry_signal(
+                        limit,
+                        f"<@{message.author.id}>\n",
+                        server_name
+                    )
+                    
                 name_tmp=str(server_name)
                 line_bot_api = LineBotApi(os.environ[f"{name_tmp}_ACCESS_TOKEN"])
-                # グループIDが存在するか否か
+                # グループIDが存在する場合。
                 if os.environ.get(f"{name_tmp}_GROUP_ID")!=None:
                     return line_bot_api.push_message(to=os.environ[f"{name_tmp}_GROUP_ID"],messages=messagelist)
                 else:
