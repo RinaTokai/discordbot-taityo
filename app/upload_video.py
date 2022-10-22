@@ -6,6 +6,7 @@ import random
 import sys
 import time
 
+# YouTubeの認証情報をjson形式で作成
 cli={
     "installed":
         {
@@ -153,6 +154,8 @@ def resumable_upload(insert_request):
             if response is not None:
                 if 'id' in response:
                     #print("Video id '%s' was successfully uploaded." % response['id'])
+                    # アップロードに成功した場合、idのみを表示する
+                    # subprocess.runで出力結果からURLを生成するので、他のprintは出力しないこと！！
                     print(response['id'])
                 else:
                     exit("The upload failed with an unexpected response: %s" % response)

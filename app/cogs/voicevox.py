@@ -43,7 +43,7 @@ class voicevox(commands.Cog):
     def __init__(self, bot : DBot):
         self.bot = bot 
 
-    @commands.slash_command()
+    @commands.slash_command(description="ずんだもんがしゃべってくれるぞ！！")
     async def zunda(
         self,
         ctx:discord.ApplicationContext,
@@ -84,7 +84,7 @@ class voicevox(commands.Cog):
         except :#discord.ApplicationCommandInvokeError:
             await ctx.respond(f"<@{ctx.author.id}> 同時に音声は流せません。")
 
-    @commands.slash_command()
+    @commands.slash_command(description="ずんだもんとおさらばなのだ")
     async def stop_zunda(self,ctx:discord.ApplicationContext):
         await ctx.respond("切断しました。")
         await ctx.voice_client.disconnect()

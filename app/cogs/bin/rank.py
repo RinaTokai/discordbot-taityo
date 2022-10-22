@@ -1,4 +1,5 @@
 import gc
+import discord
 
 import librosa
 import numpy as np
@@ -20,7 +21,7 @@ def wavsecond(wav): #wavファイルの秒数を計算
     base_sound = AudioSegment.from_file(wav, format="wav")
     return base_sound.duration_seconds
 
-def onewav(ctx):   #wavファイルの秒数を60秒以内に収める
+def onewav(ctx:discord.ApplicationContext):   #wavファイルの秒数を60秒以内に収める
     before_values=[f"./wave/{ctx.author.id}_music.wav","./wave/sample_voice.wav"]
     after_values=["./wave/ratio_music.wav","./wave/ratio_voice.wav"]
     for before_value,after_value in zip(before_values,after_values):
@@ -66,7 +67,7 @@ def wavcomp():
 
     return eval*100
 
-def wavmain(ctx):
+def wavmain(ctx:discord.ApplicationContext):
     onewav(ctx)
     eval=wavcomp()
     return round(eval, 4)
